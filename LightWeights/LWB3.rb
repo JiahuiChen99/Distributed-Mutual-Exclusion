@@ -2,7 +2,7 @@ require 'socket'
 require_relative '../methods'
 require_relative '../Mutex/RicartAgrawala'
 
-MY_ID = 'B2'.freeze
+MY_ID = 'B3'.freeze
 
 ricart_agrawala = RicartAgrawala.new(3, 2)
 

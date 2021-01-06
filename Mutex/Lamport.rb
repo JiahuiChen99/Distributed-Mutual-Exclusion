@@ -21,9 +21,9 @@ class Lamport
 
   # In case of equity, untied by id
   def is_greater(entry1, pid1, entry2, pid2)
-    # return false if entry2 == Float::INFINITY
-    puts "Value: " + entry1.to_s + " Client: " + pid1.to_s + " Value: "+ entry2.to_s + " Client: " + pid2.to_s
-    sleep 2
+    return false if entry2 == Float::INFINITY
+    # puts "Value: " + entry1.to_s + " Client: " + pid1.to_s + " Value: "+ entry2.to_s + " Client: " + pid2.to_s
+    # sleep 2
     ((entry1 > entry2) || ((entry1 == entry2) && (pid1 > pid2)))
   end
 

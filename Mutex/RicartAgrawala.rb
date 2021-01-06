@@ -1,6 +1,5 @@
 require 'socket'
 require_relative '../Clocks/lamport_clock'
-require_relative '../List/LinkedList'
 
 class RicartAgrawala
   @@myts
@@ -13,7 +12,7 @@ class RicartAgrawala
   def initialize(n_times, my_id)
     @@myts = Float::INFINITY
     @@lamport_clock = LamportClock.new
-    @@pending_queue = LinkedList.new
+    @@pending_queue = Array.new(3)
     @@n_times = n_times
     @@my_id = my_id
   end
@@ -32,8 +31,8 @@ class RicartAgrawala
 
   def release_cs(lwb1, lwb2, lwb3)
     @@myts = Float::INFINITY
-    until @@pending_queue.is_empty?
-      pid = @@pending_queue.delete(0)
+    until @@pending_queue.empty?
+      pid = @@pending_queue.shift
 
       case pid
         when 0
@@ -72,7 +71,7 @@ class RicartAgrawala
         if (@@myts == Float::INFINITY) || (time_stamp < @@myts) || ((@@myts == time_stamp) && (source_id < @@my_id))
           sv.puts "okay-#{@@lamport_clock.get_value}"
         else
-          @@pending_queue.append(source_id)
+          @@pending_queue.push(source_id)
         end
       elsif msg.chop.include? 'okay'
         puts
