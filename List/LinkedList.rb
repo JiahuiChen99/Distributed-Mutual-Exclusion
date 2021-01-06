@@ -1,3 +1,5 @@
+require_relative '../List/Node'
+
 class LinkedList
 
   def initialize

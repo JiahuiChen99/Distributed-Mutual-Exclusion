@@ -1,5 +1,9 @@
 class LamportClock
-  @@clock = 1
+  @@clock
+
+  def initialize
+    @@clock = 1
+  end
 
   def get_value
     @@clock
@@ -14,7 +18,7 @@ class LamportClock
   end
 
   def receive_action(source, sent_value)
-    @@clock = [@@clock, sent_value].max
+    @@clock = [@@clock, sent_value].max + 1
   end
 
 end

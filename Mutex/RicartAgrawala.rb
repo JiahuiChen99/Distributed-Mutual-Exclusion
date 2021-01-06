@@ -18,19 +18,16 @@ class RicartAgrawala
     @@my_id = my_id
   end
 
-  def request_cs(lwa2, lwa3)
+  def request_cs(server1, server2)
     @@lamport_clock.tick
     @@myts = @@lamport_clock.get_value
-    lwa2.puts "request-#{@@myts}"
-    lwa3.puts "request-#{@@myts}"
+    server1.puts "request-#{@@myts}"
+    server2.puts "request-#{@@myts}"
     @@num_okay = 0
 
-    loop do
-      if @@num_okay < @@n_times - 1
-        break
-      end
+    while @@num_okay < @@n_times - 1
+      # puts @@num_okay.to_s + " " + @@n_times.to_s
     end
-
   end
 
   def release_cs(lwb1, lwb2, lwb3)
@@ -40,32 +37,45 @@ class RicartAgrawala
 
       case pid
         when 0
-          lwb1.puts "okay-#{@@myts}"
+          lwb1.puts "okay-#{@@lamport_clock.get_value}"
         when 1
-          lwb2.puts "okay-#{@@myts}"
+          lwb2.puts "okay-#{@@lamport_clock.get_value}"
         when 2
-          lwb3.puts "okay-#{@@myts}"
+          lwb3.puts "okay-#{@@lamport_clock.get_value}"
         else
-          # type code here
       end
-
     end
-
   end
 
-  def handle_msg(source, source_id)
+  def handle_msg(source, source_id, server1, server2, server3)
+
     while(msg = source.gets)
+      case source_id
+      when 0
+        sv = server1
+        puts 'LWB1 Requesting CS'
+      when 1
+        sv = server2
+        puts 'LWB2 Requesting CS'
+      when 2
+        sv = server3
+        puts 'LWB3 Requesting CS'
+      end
+
+      puts msg
+
       split = msg.split('-')
       time_stamp = split[1].chop.to_i
-      @@direct_clock.receive_action(source_id, time_stamp)
+      @@lamport_clock.receive_action(source_id, time_stamp)
 
       if msg.chop.include? 'request'
-        if @@myts == Float::INFINITY || (time_stamp < @@myts) || ((@@myts == time_stamp) && (source < @@my_id))
-          source.puts = "okay-#{@@lamport_clock.get_value}"
+        if (@@myts == Float::INFINITY) || (time_stamp < @@myts) || ((@@myts == time_stamp) && (source_id < @@my_id))
+          sv.puts "okay-#{@@lamport_clock.get_value}"
         else
           @@pending_queue.append(source_id)
         end
       elsif msg.chop.include? 'okay'
+        puts
         @@num_okay += 1
         # if @@num_okay == @@n_times - 1
         # end

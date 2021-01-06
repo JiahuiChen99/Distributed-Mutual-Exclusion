@@ -22,8 +22,8 @@ lwb2 = TCPSocket.open('localhost', 8092)
 server_lwb1 = lwb3.accept
 server_lwb2 = lwb3.accept
 
-Thread.new { ricart_agrawala.handle_msg(server_lwb1, 0) }
-Thread.new { ricart_agrawala.handle_msg(server_lwb2, 1) }
+Thread.new { ricart_agrawala.handle_msg(server_lwb1, 0, lwb1, lwb2, lwb3) }
+Thread.new { ricart_agrawala.handle_msg(server_lwb2, 1, lwb1, lwb2, lwb3) }
 
 loop do
   wait_heavy_weight(server)
